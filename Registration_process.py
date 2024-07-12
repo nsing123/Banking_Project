@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[2]:
+Registration Process
 
 
 import mysql.connector
@@ -100,7 +97,7 @@ def user_input():
                 break
         d['MobileNumber']=mobile_no
         
-        if not insert_user_reg_data(name,password,address,adharnumber,mobile_no):
+        if not insert_user_reg_data(name,password,address,adharnumber,mobile_no):  # if adhar number is same then do not add the record.
             return False
         
         d['account_number']=cg.generate_account()
@@ -263,17 +260,6 @@ def insert_user_cards(card_type,card_number,pin,cvv):
     finally:
         connection.close()  # Close the connection
 
-# Example usage:
-#insert_user_reg_data('john_doe', 'password123', '123 Main St', '123456789012', '9876543210')
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 

@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[105]:
+# Login MOdule
 
 
 import mysql.connector
@@ -26,18 +23,18 @@ import Registration_process as reg_p
 
 # In[107]:
 
-
+# retrieving balance and account number
 def chcek_balance(user_id):
         connection = db_con.database_connection()
         try:
             with connection.cursor() as cursor:
 
-                sql_balance="select * from banking.account_details where user_id=%s"
+                sql_balance="select * from banking.account_details where user_id=%s"  # check for the specific userid if balance is there
                 
                 cursor.execute(sql_balance, (user_id,))
                 result_balance=cursor.fetchall()
-                if not result_balance:
-                    print("Balance not present")
+                if not result_balance:        # print no account found 
+                    print("Account not present")
                 return result_balance[0]
         except Exception as e:
             print("Error occured",e,"Try again")
@@ -52,6 +49,7 @@ def chcek_balance(user_id):
 
 # In[108]:
 
+#beneficiary details 
 
 def get_beneficiary(user_id):
         connection = db_con.database_connection()
@@ -64,7 +62,7 @@ def get_beneficiary(user_id):
                 """
                 cursor.execute(select_query, (user_id,))
                 result = cursor.fetchall()
-                if not result:
+                if not result:  # no beneficiary then print below
                         print("No records found.")
                 else:
                     print("Beneficiary details")
@@ -83,7 +81,7 @@ def get_beneficiary(user_id):
 
 # In[109]:
 
-
+# get all the added cards for the user
 def get_cards(user_id):
         connection =db_con.database_connection()
         try:
@@ -95,7 +93,7 @@ where UserID=%s
                 """
                 cursor.execute(select_query, (user_id,))
                 result = cursor.fetchall()
-                if not result:
+                if not result:  # no result in db show below message
                         print("No records found.")
                 else:
                     
@@ -114,7 +112,7 @@ where UserID=%s
 
 # In[110]:
 
-
+#add beneficiary for users
 def add_beneficiary(user_id, beneficiary_name, account_number, bank_name):
     connection = db_con.create_db_connection()
     
@@ -125,7 +123,7 @@ def add_beneficiary(user_id, beneficiary_name, account_number, bank_name):
             # Check if beneficiary account already exists for the user
             check_ben = "SELECT * FROM Beneficiaries WHERE user_id = %s AND account_number = %s"
             cursor.execute(check_ben, (user_id, account_number))
-            existing_beneficiary = cursor.fetchone()
+            existing_beneficiary = cursor.fetchone() 
         
             #account=existing_beneficiary['account_number']
             
@@ -189,7 +187,8 @@ def update_account_info(user_id):
                     
             except Exception as e:
                 print("error occured ", e)
-                
+
+        # same Process for mobile update
 
         if response=='2':
             new_mobile_no=input("enter new mobile number to update")
@@ -231,106 +230,8 @@ def update_account_info(user_id):
 # In[112]:
 
 
-def fund_transfer_1(user_id):
-    connection = db_con.database_connection()
-    try:
-        with connection.cursor() as cursor:
-            sender_account = input("Enter sender's account number: ")
-            while True:
-                if not vd.validate_account(sender_account):
-                    sender_account = input("Enter valid sender's account number: ")
-                else:
-                    break
-
-            # Fetch sender's account details
-            select_sender_query = """
-            SELECT username, account_number, amount
-            FROM Users_reg_data u
-            JOIN account_details a ON u.userid = a.user_id
-            WHERE u.userid = %s AND a.account_number = %s
-            """
-            cursor.execute(select_sender_query, (user_id, sender_account))
-            sender_result = cursor.fetchone()
-            #print(sender_result,sender_result['amount'])
-
-            if sender_result:
-                print("Enter the beneficiary details")
-                
-                beneficiary_account = input("Enter the beneficiary's account number: ")
-                while True:
-                    if not vd.validate_account(beneficiary_account):
-                        beneficiary_account = input("Enter valid beneficiary's account number: ")
-                    else:
-                        break
-
-                # Validate beneficiary account existence
-                select_beneficiary_query = """
-                SELECT id, account_number
-                FROM  Beneficiaries
-                WHERE account_number = %s and user_id=%s
-                """
-                cursor.execute(select_beneficiary_query, ( beneficiary_account,user_id))
-                beneficiary_result = cursor.fetchone()
-                
-                beneficiary_id=beneficiary_result['id']
-                beneficiary_account=beneficiary_result['account_number']
-                
-                #print(beneficiary_result['id'],beneficiary_account)
-
-                if not beneficiary_result:
-                    print("Beneficiary account not found.")
-                else:
-                    while True:
-                        try:
-                            amount = Decimal(input("Enter the amount to transfer: "))
-                            #print(amount)
-                            if amount <= 0:
-                                print("Amount must be greater than zero.")
-                            elif amount > sender_result['amount']:
-                                print("Insufficient balance.")
-                                break
-                            else:
-                                break
-                        except Decimal.InvalidOperation:
-                            print("Invalid amount. Please enter a valid number.")
-
-                    # Update sender's balance
-                    if amount < sender_result['amount']:
-                        new_sender_balance = sender_result['amount'] - amount
-                        update_sender_query = """
-                        UPDATE account_details
-                        SET amount = %s
-                        WHERE user_id = %s AND account_number = %s
-                        """
-                        cursor.execute(update_sender_query, (new_sender_balance, user_id, sender_account))
-                        connection.commit()
-                    
-                    
-                        update_transfer="insert into banking.Transactions(sender_id,beneficiary_id,amount) values(%s,%s,%s)"
-                        cursor.execute(update_transfer, (user_id, beneficiary_id, amount))
-                        connection.commit()
-    
-
-                    # Optionally, update beneficiary's balance here if required
-                    # Update beneficiary's balance or perform transaction recording here
-
-                        print(f"Transfer of {amount} successful.")
-                    
-            else:
-                print(f"Sender account {sender_account} not found for user.")
-
-    except Exception as e:
-        print("Error occurred:", e)
-    finally:
-        connection.close()
-
-
-# In[113]:
-
-
 from decimal import Decimal, InvalidOperation
-#import db_con  # Assuming db_con imports the necessary database connection utilities
-#import validate_data as vd  # Assuming validate_data has validate_account function
+
 
 def fund_transfer(user_id):
     connection = db_con.database_connection()
@@ -364,6 +265,7 @@ def fund_transfer(user_id):
                         break
 
                 # Validate beneficiary account existence
+                    
                 select_beneficiary_query = """
                 SELECT id, account_number
                 FROM Beneficiaries
@@ -407,7 +309,7 @@ def fund_transfer(user_id):
                         cursor.execute(insert_transaction_query, (user_id, beneficiary_result['id'], amount))
                         connection.commit()
 
-                        # Update beneficiary's balance
+                        # Update beneficiary's balance if exists with current bank
                         update_beneficiary_query = """
                         UPDATE account_details
                         SET amount = amount + %s
@@ -430,54 +332,10 @@ def fund_transfer(user_id):
 # In[114]:
 
 
-def change_pin_1(user_id, cardtype, old_pin, new_pin):
-    connection =db_con.database_connection() # to return rows in form of dictionaries not tuples
-    
-    while True :
-        res=input("Enter 'exit' to quit registration process else 1 to proceed")
-        if res.lower()!='exit':
-    
-            try:
-                with connection.cursor() as cursor:
 
 
-            # Fetch card details for the user
-                    fetch_card_details = "SELECT * FROM banking.user_Cards WHERE user_id = %s AND card_type = %s and pin=%s"
-                    cursor.execute(fetch_card_details, (user_id, cardtype,old_pin))
-                    result = cursor.fetchone()
-                    #print(result,result['pin'],old_pin,result['pin']==old_pin,result['card_number'])
-                    print(result)
-                    card_num=result['card_number']
-                    if not result:
-                        print(f"No '{cardtype}' card found for user.")
-                        return
-
-            # Verify old PIN and update new PIN if conditions are met
-                    if result['pin'] == str(old_pin):
-                        update_query = "UPDATE banking.user_Cards SET pin = %s WHERE user_id = %s AND card_type = %s  and card_number=%s"
-                        cursor.execute(update_query, (new_pin, user_id, cardtype,card_num))
-                        connection.commit()  # Commit the transaction
-                        print(f"PIN updated successfully for '{user_id}' with '{cardtype}' card.")
-                    else:
-                        print("Old PIN does not match. PIN update failed.")
-
-            except pymysql.Error as e:
-                print(f"Error: {e}")
-
-            finally:
-                connection.close()
-        # Close the database connection
-        else:
-            break
-    
-        return True
 
 
-# In[115]:
-
-
-#import db_con  # Assuming db_con imports the necessary database connection utilities
-import pymysql  # Assuming pymysql is imported for database errors handling
 
 def change_pin(user_id, cardtype, old_pin, new_pin):
     connection = db_con.database_connection()  # Assuming database_connection returns a valid connection object
@@ -527,7 +385,7 @@ def change_pin(user_id, cardtype, old_pin, new_pin):
 
 # In[116]:
 
-
+# this function is to enter thr masked pin
 def enter_new_pin():
     while True:
         new_pin = getpass.getpass("Enter 4-digit PIN: ")

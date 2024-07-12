@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[28]:
-
+#Generating the card number , cvv , pin and account number
 
 import mysql.connector
 from mysql.connector import Error

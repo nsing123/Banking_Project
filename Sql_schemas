@@ -1,0 +1,92 @@
+
+#----------final dataset--------------
+
+#use banking;
+
+/*CREATE TABLE Users_reg_data (
+    UserID INT PRIMARY KEY AUTO_INCREMENT,
+    UserName VARCHAR(100) NOT NULL,
+    password varchar(255) not null,
+    Address VARCHAR(255),
+    AadharNumber VARCHAR(255) UNIQUE,
+    MobileNumber VARCHAR(255)
+    );
+*/
+/*
+create table  account_details  (
+Account_number varchar(255),
+user_id int,
+Amount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+FOREIGN KEY (user_id) REFERENCES Users_reg_data(UserID)
+);
+*/
+
+/*
+CREATE TABLE user_Cards (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    card_type ENUM('debit', 'credit'),
+    card_number VARCHAR(16),
+    pin VARCHAR(4),
+    cvv VARCHAR(3),
+	FOREIGN KEY (user_id) REFERENCES Users_reg_data(UserID)
+);
+
+*/
+/*
+
+*/
+
+
+/*
+drop table Beneficiaries;
+CREATE TABLE Beneficiaries (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    beneficiary_name VARCHAR(255),
+    account_number VARCHAR(20),
+    bank_name VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES Users_reg_data(userid)
+);
+
+
+#Truncate table :
+truncate table Beneficiaries;
+*/
+
+/*
+use banking;
+CREATE TABLE Transactions (
+    transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    beneficiary_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES Users_reg_data(UserID),
+    FOREIGN KEY (beneficiary_id) REFERENCES Beneficiaries(id)
+);
+
+*/
+
+
+/*
+truncate table Users_reg_data;
+truncate table Users_reg_data;
+truncate table account_details;
+truncate table user_Cards;
+truncate table Beneficiaries;
+truncate table Transactions;
+
+drop table Users_reg_data;
+drop table  Users_reg_data;
+drop table  account_details;
+drop table  user_Cards;
+drop table  Beneficiaries;
+drop table  Transactions;
+*/
+
+select * from Users_reg_data;
+select * from account_details;
+select * from user_Cards;
+select * from Beneficiaries;
+select * from Transactions;

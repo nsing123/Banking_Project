@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[4]:
-
+#database connection module
 
 def database_connection():
     connection=None
@@ -11,7 +7,7 @@ def database_connection():
                                  user='root',
                                  password='Mar23iscming',
                                  database='banking',
-                                 cursorclass=pymysql.cursors.DictCursor)
+                                 cursorclass=pymysql.cursors.DictCursor) # this connection for retriving data from sql in form of dictionary
         #print("MySQL datyabase is connected suscessfully")
     except Error as err:
         print(f"Error :{err}")
@@ -24,7 +20,7 @@ def create_db_connection():
         user="root",
         password="Mar23iscming",
         database="Banking"
-        )
+        ) ## this connection for retriving data from sql in form of tuple
         #print("MySQL datyabase is connected suscessfully")
     except Error as err:
         print(f"Error :{err}")
@@ -45,8 +41,8 @@ def create_server_connection(host_name,user_name,user_password):
             print(f"Error: {err}")
     return connection
 
-pw="Mar23iscming"
-db="mysql_python"
+pw="enter your password" #enter your password
+db="database name" #database name
 connection=create_server_connection("localhost","root",pw)
 def create_db_connection():
     connection=None
